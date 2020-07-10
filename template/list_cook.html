@@ -1,0 +1,43 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    <h1 align="center">List Cooks</h1>
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Age</th>
+                <th>Ph. Number</th>
+                <th>PAN Number</th>
+                <td>Edit</td>
+                <td>Delete</td>
+            </tr>
+        </thead>
+        <tbody>
+            {% for cook in cook_list %}
+                <tr>
+                    <td>
+                        <a href="{% url 'cms:detail_cook' pk=cook.id %}">
+                        {{ cook.name }}
+                        </a>
+                    </td>
+                    <td>{{ cook.age }}</td>
+                    <td>{{ cook.info.phone_no }}</td>
+                    <td>{{ cook.info.pan_no }}</td>
+                    <td>
+                        <a href="{% url 'cms:edit_cook' pk=cook.id %}">
+                            <button class="btn btn-outline-warning">Edit</button>
+                        </a>
+                    </td>
+
+                    <td>
+                        <a href="{% url 'cms:delete_cook' pk=cook.id %}">
+                            <button class="btn btn-outline-danger">Delete</button>
+                        </a>
+                    </td>
+
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+{% endblock %}

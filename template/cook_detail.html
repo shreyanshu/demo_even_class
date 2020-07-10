@@ -1,0 +1,9 @@
+{% extends 'base.html' %}
+
+{% block content %}
+{#    <img src="{{ object.profile_pic.url }}">#}
+    <h3>Name: {{ object.name }}</h3>
+    <h3>Age: {{ object.age }}</h3>
+    <h3>Ph Number: {{ object.info.phone_no }}</h3>
+    <h3>PAN Number: {{ object.info.pan_no }}</h3>
+{% endblock %}

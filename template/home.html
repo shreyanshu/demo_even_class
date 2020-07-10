@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+{% load static %}
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <link rel="stylesheet" type="text/css" href="{% static 'css/style.css' %}">
+</head>
+<body>
+    h1>This is a home page</h1>
+    <p style="color: greenyellow">Welcome to your canteen</p>
+ <img src="{% static 'images/image.png' %}">
+
+
+    {% for item in list_sahti %}
+        <br>{{ item }}<br>
+        <p>test test</p>
+        {% if item == 'ram' %}
+            the name is ram
+        {% elif item == 'hari' %}
+            the name is hari
+        {% else %}
+            this is else
+        {% endif %}
+    {% endfor %}
+
+</body>
+</html>

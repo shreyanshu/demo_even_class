@@ -1,0 +1,41 @@
+{% extends 'base.html' %}
+{% block title %}List Food{% endblock %}
+{% block content %}
+    <h1 align="center">List Foods</h1>
+    <table class="table table-bordered col-sm-6">
+        <thead>
+            <tr>
+                <th>id</th>
+                <th>Name</th>
+                <th>Qty</th>
+                <th>Price</th>
+                <th>Discount</th>
+                <th>Cook</th>
+                <th>Edit</th>
+                <th>Delete</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for item in list_food %}
+                <tr>
+                    <td>{{ item.id }}</td>
+                    <td>{{ item.name }}</td>
+                    <td>{{ item.qty }}</td>
+                    <td>{{ item.price }}</td>
+                    <td>{{ item.discount }}</td>
+                    <td>{{ item.cook }}</td>
+                    <td>
+                        <a href="{% url 'cms:edit_food' id=item.id %}">
+                            <button class="btn btn-outline-warning">Edit</button>
+                        </a>
+                    </td>
+                    <td>
+                         <a href="{% url 'cms:delete_food' id=item.id %}">
+                            <button class="btn btn-outline-danger">Delete</button>
+                        </a>
+                    </td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+{% endblock %}
