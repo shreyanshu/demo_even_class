@@ -2,7 +2,7 @@
 {% block title %}List Food{% endblock %}
 {% block content %}
     <h1 align="center">List Foods</h1>
-    <table class="table table-bordered col-sm-6">
+    <table class="table table-bordered">
         <thead>
             <tr>
                 <th>id</th>
@@ -11,8 +11,10 @@
                 <th>Price</th>
                 <th>Discount</th>
                 <th>Cook</th>
-                <th>Edit</th>
-                <th>Delete</th>
+                {% if user.is_authenticated %}
+                    <th>Edit</th>
+                    <th>Delete</th>
+                {% endif %}
             </tr>
         </thead>
         <tbody>
@@ -24,6 +26,7 @@
                     <td>{{ item.price }}</td>
                     <td>{{ item.discount }}</td>
                     <td>{{ item.cook }}</td>
+                    {% if user.is_authenticated %}
                     <td>
                         <a href="{% url 'cms:edit_food' id=item.id %}">
                             <button class="btn btn-outline-warning">Edit</button>
@@ -34,6 +37,7 @@
                             <button class="btn btn-outline-danger">Delete</button>
                         </a>
                     </td>
+                {% endif %}
                 </tr>
             {% endfor %}
         </tbody>

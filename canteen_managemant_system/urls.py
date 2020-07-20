@@ -15,6 +15,11 @@ urlpatterns = [
     path('add_cook/', views.CreateCookView.as_view(), name='add_cook'),
     path('edit_cook/<int:pk>/', views.UpdateCookView.as_view(), name='edit_cook'),
     path('delete_cook/<int:pk>/', views.DeleteCookView.as_view(), name='delete_cook'),
-    path('login/', views.login_view, name='login')
+    path('login/', views.login_view, name='login'),
+    path('logout/', views.logout_view, name='logout'),
+    path('api/cook/', views.cook_api),
+    path('api/cook/<int:id>/', views.cook_individual_api),
+    path('api/food_item/', views.food_item_api),
+    path('api/food_item/<int:id>/', views.api_food_individual),
     # path('login/')
 ]

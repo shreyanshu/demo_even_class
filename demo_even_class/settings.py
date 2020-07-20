@@ -39,7 +39,9 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'canteen_managemant_system',
-    'crispy_forms'
+    'crispy_forms',
+    'rest_framework',
+    'rest_framework.authtoken'
 ]
 
 MIDDLEWARE = [
@@ -133,3 +135,11 @@ STATICFILES_DIRS = [STATIC_DIR]
 MEDIA_URL = '/media/'
 MEDIA_ROOT = MEDIA_DIR
 CRISPY_TEMPLATE_PACK = 'bootstrap4'
+
+AUTH_USER_MODEL = 'canteen_managemant_system.CustomUser'
+
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': [
+        'rest_framework.authentication.TokenAuthentication',
+    ],
+}

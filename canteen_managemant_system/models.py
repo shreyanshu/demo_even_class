@@ -1,6 +1,17 @@
 from django.db import models
-from django.contrib.auth.models import User
+from django.contrib.auth.models import User, AbstractUser
+
+
 # Create your models here.
+
+
+# class UserInfo(models.Model):
+#     user = models.OneToOneField(User)
+#     profile_pic = models.ImageField(upload_to='user_images')
+#     age = models.IntegerField()
+class CustomUser(AbstractUser):
+    profile_pic = models.ImageField(upload_to='user_photos')
+
 
 
 class CookInfo(models.Model):

@@ -1,15 +1,23 @@
-from django.contrib.auth import authenticate, login
+from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, HttpResponse, redirect, reverse
 from django.urls import reverse_lazy
+from django.http import JsonResponse
+from django.views.decorators.csrf import csrf_exempt
+from rest_framework.decorators import action, api_view, permission_classes
+from rest_framework.permissions import IsAuthenticated
 
 from canteen_managemant_system.models import FoodItem, Cook
 from canteen_managemant_system.forms import FoodItemForm, FoodItemModelForm, CookModelForm, LoginForm
 from django.views import View
 from django.views.generic import TemplateView, ListView, DetailView, CreateView, UpdateView, DeleteView
 from django.contrib import messages
+from django.contrib.auth.mixins import  LoginRequiredMixin
+from rest_framework.parsers import JSONParser
 # from .models import
 # Create your views here.
+from canteen_managemant_system.serializers import CookSerializer, FoodItemSerializer
+
 
 def home(request):
     # data model, design template
@@ -37,7 +45,7 @@ def add_food(request):
         else:
             return render(request, 'add_food.html', {'food_form': food_form})
 
-
+@login_required(login_url=reverse_lazy('cms:login'))
 def edit_food(request, id):
     food = FoodItem.objects.get(id=id)
     if request.method == 'GET':
@@ -52,6 +60,7 @@ def edit_food(request, id):
             return render(request, 'edit_food.html', {'form': form})
 
 
+@login_required(login_url=reverse_lazy('cms:login'))
 def delete_food(request, id):
     food = FoodItem.objects.get(id=id)
     food.delete()
@@ -87,9 +96,10 @@ class CookDetailView(DetailView):
     template_name = 'cook_detail.html'
 
 
-class CreateCookView(CreateView):
+class CreateCookView(LoginRequiredMixin, CreateView):
     # model = Cook
     # fields = ['name', 'age', 'profile_pic']
+    login_url = reverse_lazy('cms:login')
     template_name = 'create_cook.html'
     success_url = reverse_lazy('cms:list_cook')
     form_class = CookModelForm
@@ -123,9 +133,86 @@ def login_view(request):
             if user.is_active:
                 login(request, user)
                 messages.success(request, 'Login Successful')
+                if 'next' in request.GET.keys():
+                    return redirect(request.GET['next'])
                 return redirect('cms:list_food')
             else:
                 return redirect('cms:login')
         else:
             messages.warning(request, 'Invalid username and password')
             return redirect('cms:login')
+
+
+@login_required(login_url=reverse_lazy('cms:login'))
+def logout_view(request):
+    logout(request)
+    return redirect('cms:login')
+
+
+@csrf_exempt
+def cook_api(request):
+    if request.method == 'GET':
+        cooks = Cook.objects.all()
+        cooks_serializer = CookSerializer(cooks, many=True)
+        return JsonResponse(cooks_serializer.data, safe=False)
+    if request.method=='POST':
+        data = JSONParser().parse(request)
+        print(data)
+        return HttpResponse(status=200)
+
+
+def cook_individual_api(request, id):
+    if request.method == 'GET':
+        try:
+            cook = Cook.objects.get(id=id)
+            cook_ser = CookSerializer(cook)
+            return JsonResponse(cook_ser.data)
+        except Cook.DoesNotExist:
+            return HttpResponse(status=404)
+
+
+@csrf_exempt
+@api_view(['GET', 'POST'])
+@permission_classes([IsAuthenticated])
+def food_item_api(request):
+    if request.method == 'GET':
+        foods = FoodItem.objects.all()
+        api_data = FoodItemSerializer(foods, many=True)
+        return JsonResponse(api_data.data, safe=False)
+
+    elif request.method == 'POST':
+        print(request)
+        data = JSONParser().parse(request)
+        data_ser = FoodItemSerializer(data = data)
+        if data_ser.is_valid():
+            food = data_ser.save()
+            return HttpResponse(status=200)
+        else:
+            return JsonResponse(data_ser.errors, status=500)
+
+
+@csrf_exempt
+@api_view(['GET', 'PUT', 'DELETE', 'POST'])
+@permission_classes([IsAuthenticated])
+def api_food_individual(request, id):
+    try:
+        food = FoodItem.objects.get(id=id)
+    except FoodItem.DoesNotExist:
+        return HttpResponse(status=404)
+
+    if request.method == 'GET':
+        data_ser = FoodItemSerializer(food)
+        return JsonResponse(data_ser.data)
+
+    elif request.method == 'DELETE':
+        food.delete()
+        return HttpResponse(status=200)
+
+    elif request.method == 'PUT':
+        data = JSONParser().parse(request)
+        data_ser = FoodItemSerializer(data=data, instance=food)
+        if data_ser.is_valid():
+            data_ser.save()
+            return JsonResponse(data_ser.data, status=200)
+        else:
+            return JsonResponse(data_ser.errors, status=505)

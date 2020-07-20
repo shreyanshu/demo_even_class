@@ -36,6 +36,15 @@
           <li class="nav-item">
             <a class="nav-link disabled" href="#" tabindex="-1" aria-disabled="true">Disabled</a>
           </li>
+          {% if user.is_authenticated %}
+          <li class="nav-item">
+            <a class="nav-link" href="{% url 'cms:logout' %}" tabindex="-1">Logout</a>
+          </li>
+            {% else %}
+              <li class="nav-item">
+            <a class="nav-link" href="{% url 'cms:login' %}" tabindex="-1">Login</a>
+          </li>
+            {% endif %}
         </ul>
         <form class="form-inline my-2 my-lg-0">
           <input class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search">
